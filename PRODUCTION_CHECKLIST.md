@@ -32,6 +32,8 @@ Use this checklist before shipping a new `aztec-py` version to production.
 - [ ] Confirm `README.md` examples still execute.
 - [ ] Verify version metadata in `pyproject.toml`.
 - [ ] Build artifacts from clean working tree.
+- [ ] PyPI Trusted Publisher is configured for `.github/workflows/publish.yml` (environment: `pypi`).
+- [ ] Tag/version alignment checked before publish (`vX.Y.Z` matches `pyproject.toml`).
 
 ## 5. Post-Release Smoke Checks
 
