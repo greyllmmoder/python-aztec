@@ -1,0 +1,55 @@
+name: release-gate
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published, prereleased]
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,image,pdf]"
+          python -m pip install build twine
+
+      - name: Quality gates
+        run: |
+          pytest -q
+          ruff check .
+          mypy --strict aztec_py
+
+      - name: Conformance evidence
+        run: |
+          python scripts/conformance_report.py \
+            --report conformance_report.md \
+            --json conformance_report.json \
+            --matrix-report compat_matrix_report.md
+
+      - name: Build and verify artifacts
+        run: |
+          python -m build
+          twine check dist/*
+
+      - name: Upload release gate artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-gate-evidence
+          path: |
+            conformance_report.md
+            conformance_report.json
+            compat_matrix_report.md
+            dist/*

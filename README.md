@@ -79,7 +79,17 @@ Use strict mode when decode checks are mandatory in CI:
 python scripts/decoder_matrix.py --strict-decode
 ```
 
+Generate full conformance evidence (markdown + JSON + compatibility matrix):
+
+```bash
+python scripts/conformance_report.py \
+  --report conformance_report.md \
+  --json conformance_report.json \
+  --matrix-report compat_matrix_report.md
+```
+
 Fixture source: `tests/compat/fixtures.json`
+Traceability matrix: `docs/ISO_IEC_24778_TRACEABILITY.md`
 Release checklist: `PRODUCTION_CHECKLIST.md`
 
 ## CLI
