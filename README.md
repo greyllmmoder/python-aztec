@@ -29,6 +29,31 @@ pip install "aztec-py[decode]"   # Decode utility via python-zxing + Java
 pip install "aztec-py[svg]"      # lxml-backed SVG workflows (optional)
 ```
 
+## Use In Your Project
+
+Recommended dependency pins for production:
+
+`requirements.txt`
+```text
+aztec-py>=0.11,<1.0
+```
+
+`pyproject.toml` (PEP 621)
+```toml
+[project]
+dependencies = [
+  "aztec-py>=0.11,<1.0",
+]
+```
+
+Install directly from GitHub when you need an unreleased fix:
+
+```bash
+pip install "aztec-py @ git+https://github.com/greyllmmoder/python-aztec.git@<tag-or-commit>"
+```
+
+For production, pin to a tag or commit SHA, not `main`.
+
 ## Quick Start
 
 ```python
