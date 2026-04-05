@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "ascii_hello",
+      "payload": {
+        "kind": "text",
+        "value": "Hello World"
+      },
+      "tags": ["smoke", "text"]
+    },
+    {
+      "id": "latin1_explicit_charset",
+      "payload": {
+        "kind": "text",
+        "value": "Fran\u00e7ais"
+      },
+      "charset": "ISO-8859-1",
+      "tags": ["text", "charset"]
+    },
+    {
+      "id": "binary_small_bytes",
+      "payload": {
+        "kind": "bytes_hex",
+        "value": "00010203feff"
+      },
+      "decode_expected": false,
+      "tags": ["binary", "smoke"]
+    },
+    {
+      "id": "crlf_roundtrip_input",
+      "payload": {
+        "kind": "bytes_hex",
+        "value": "6c696e65310d0a6c696e65320d0a6c696e6533"
+      },
+      "decode_expected": false,
+      "tags": ["regression", "crlf", "binary"]
+    },
+    {
+      "id": "dense_ff_212",
+      "payload": {
+        "kind": "bytes_repeat",
+        "byte": "ff",
+        "count": 212
+      },
+      "ec_percent": 10,
+      "decode_expected": false,
+      "tags": ["regression", "dense", "ec"]
+    },
+    {
+      "id": "dense_00_212",
+      "payload": {
+        "kind": "bytes_repeat",
+        "byte": "00",
+        "count": 212
+      },
+      "ec_percent": 10,
+      "decode_expected": false,
+      "tags": ["regression", "dense", "ec"]
+    },
+    {
+      "id": "gs1_fixed_length",
+      "payload": {
+        "kind": "text",
+        "value": "010345312000001117120508"
+      },
+      "tags": ["gs1", "text"]
+    },
+    {
+      "id": "gs1_variable_with_group_separator",
+      "payload": {
+        "kind": "text",
+        "value": "01034531200000111712050810ABCD1234\u001d4109501101020917"
+      },
+      "tags": ["gs1", "separator", "text"]
+    },
+    {
+      "id": "long_text_paragraph",
+      "payload": {
+        "kind": "text",
+        "value": "Aztec production fixture paragraph used to verify medium-length payload generation remains stable across module changes."
+      },
+      "tags": ["text", "length"]
+    }
+  ]
+}
