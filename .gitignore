@@ -40,6 +40,9 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+compat_matrix_report.md
+conformance_report.md
+conformance_report.json
 nosetests.xml
 coverage.xml
 *,cover

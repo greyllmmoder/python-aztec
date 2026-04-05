@@ -3,3 +3,4 @@ include requirements.txt
 include LICENSE
 include LICENSE.upstream
 include CONTRIBUTORS.md
+include docs/ISO_IEC_24778_TRACEABILITY.md
