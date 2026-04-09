@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "aztec-py"
 version = "1.1.0"
-description = "Pure-Python Aztec Code generator for boarding passes, GS1 labels, ticketing, and high-volume batch workflows. SVG, PDF, PNG, CLI, ISO 24778."
+description = "GS1 2027-compliant pure-Python Aztec Code generator. FLG(0) Reader Initialisation, batch encoding, SVG/PDF/PNG, CLI, boarding passes, GS1 labels. ISO 24778."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
@@ -15,7 +15,8 @@ authors = [
 keywords = [
   "aztec", "aztec-code", "barcode", "2d-barcode", "qr-code",
   "iso-24778", "barcode-generator", "aztec-rune", "svg-barcode",
-  "gs1", "boarding-pass", "label-printing", "batch-barcode",
+  "gs1", "gs1-2027", "gs1-compliant", "gs1-aztec",
+  "boarding-pass", "label-printing", "batch-barcode",
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
