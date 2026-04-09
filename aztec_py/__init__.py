@@ -3,6 +3,7 @@
 __version__ = "1.1.0"
 
 from .batch import encode_batch
+from .bcbp import BCBPSegment, build_bcbp_string
 from .core import (
     AztecCode,
     Latch,
@@ -24,6 +25,8 @@ from .rune import AztecRune
 
 __all__ = [
     'AztecCode',
+    'BCBPSegment',
+    'build_bcbp_string',
     'encode_batch',
     'Latch',
     'Misc',
