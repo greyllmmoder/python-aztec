@@ -216,3 +216,51 @@ class Test(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
+
+
+# ---------------------------------------------------------------------------
+# ECI roundtrip tests (pytest-style)
+# Verify that ECI FLG(n) tokens are correctly prepended to the sequence and
+# that AztecCode encodes non-Latin payloads without error.
+# ---------------------------------------------------------------------------
+
+def test_eci_dict_contains_standard_charsets() -> None:
+    """encoding_to_eci maps well-known charsets to their ISO 24778 ECI values."""
+    assert encoding_to_eci["utf-8"] == 26
+    assert encoding_to_eci["iso8859-1"] == 1
+    assert encoding_to_eci["iso8859-8"] == 10
+    assert encoding_to_eci["shift_jis"] == 20
+
+
+def test_eci_sequence_starts_with_flg_punct_for_utf8() -> None:
+    """find_optimal_sequence with utf-8 encoding prepends FLG(2) + ECI value 26."""
+    seq = find_optimal_sequence("hello", encoding="utf-8")
+    assert seq[0] is Shift.PUNCT, "First element must be Shift.PUNCT for FLG preamble"
+    assert seq[1] is Misc.FLG, "Second element must be Misc.FLG"
+    assert seq[2] == 2, "FLG count must be 2 (len of '26')"
+    assert seq[3] == 26, "ECI value for utf-8 must be 26"
+
+
+def test_eci_sequence_single_digit_eci_value() -> None:
+    """iso8859-1 (ECI=1) produces a single-digit FLG count of 1."""
+    seq = find_optimal_sequence("hello", encoding="iso8859-1")
+    assert seq[0] is Shift.PUNCT
+    assert seq[1] is Misc.FLG
+    assert seq[2] == 1, "FLG count must be 1 for single-digit ECI value"
+    assert seq[3] == 1, "ECI value for iso8859-1 must be 1"
+
+
+def test_aztec_code_utf8_non_ascii_encodes_without_error() -> None:
+    """AztecCode encodes a UTF-8 payload containing non-ASCII characters."""
+    payload = "The price is \u20ac4"   # € is U+20AC, not in iso8859-1
+    code = AztecCode(payload, encoding="utf-8")
+    assert code is not None
+    assert code.size >= 15
+
+
+def test_aztec_code_iso8859_8_encodes_without_error() -> None:
+    """AztecCode encodes a Hebrew payload via iso8859-8 ECI."""
+    payload = "\u05d0\u05d1\u05d2"   # alef, bet, gimel (Unicode Hebrew, iso8859-8 encodable)
+    code = AztecCode(payload, encoding="iso8859-8")
+    assert code is not None
+    assert code.size >= 15
