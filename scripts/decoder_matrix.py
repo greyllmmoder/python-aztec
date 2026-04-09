@@ -32,6 +32,7 @@ def _decode_backend_unavailable(message: str) -> bool:
         "optional dependency 'zxing'" in lower
         or "java runtime" in lower
         or "java" in lower and "failed to decode" in lower
+        or "optional backend" in lower  # zxingcpp-first fallback message
     )
 
 
