@@ -214,13 +214,12 @@ def reed_solomon(wd: list[int], nd: int, nc: int, gf: int, pp: int) -> None:
                 wd[nd + j] ^= wd[nd + j + 1]
 
 
-def find_optimal_sequence(data: Union[str, bytes], encoding: Optional[str] = None) -> list[Any]:
+def find_optimal_sequence(data: Union[str, bytes], encoding: Optional[str] = None, gs1: bool = False) -> list[Any]:
     """Find the shortest mode/value sequence needed to encode the payload.
-
-    TODO: add support of FLG(n) processing
 
     :param data: string or bytes to encode
     :param encoding: see :py:class:`AztecCode`
+    :param gs1: if True, prepend FLG(0) Reader Initialisation character per ISO 24778 §7
     :return: optimal sequence
     """
 
@@ -386,6 +385,9 @@ def find_optimal_sequence(data: Union[str, bytes], encoding: Optional[str] = Non
     if eci is not None:
         updated_result_seq = [ Shift.PUNCT, Misc.FLG, len(str(eci)), eci ] + updated_result_seq
 
+    if gs1:
+        updated_result_seq = [Shift.PUNCT, Misc.FLG, 0] + updated_result_seq
+
     return updated_result_seq
 
 
@@ -514,6 +516,7 @@ def find_suitable_matrix_size(
     data: Union[str, bytes],
     ec_percent: int = 23,
     encoding: Optional[str] = None,
+    gs1: bool = False,
 ) -> tuple[int, bool, list[Any]]:
     """Find suitable matrix size.
     Raise an exception if suitable size is not found
@@ -521,9 +524,10 @@ def find_suitable_matrix_size(
     :param data: string or bytes to encode
     :param ec_percent: percentage of symbol capacity for error correction (default 23%)
     :param encoding: see :py:class:`AztecCode`
+    :param gs1: if True, account for FLG(0) preamble when sizing the matrix
     :return: (size, compact) tuple
     """
-    optimal_sequence = find_optimal_sequence(data, encoding)
+    optimal_sequence = find_optimal_sequence(data, encoding, gs1)
     out_bits = optimal_sequence_to_bits(optimal_sequence)
     for (size, compact) in sorted(configs.keys()):
         config = get_config_from_table(size, compact)
@@ -548,6 +552,7 @@ class AztecCode(object):
         ec_percent: Optional[int] = None,
         encoding: Optional[str] = None,
         charset: Optional[str] = None,
+        gs1: bool = False,
     ) -> "AztecCode":
         """Build an AztecCode using named preset defaults.
 
@@ -567,6 +572,7 @@ class AztecCode(object):
             ec_percent=resolved_ec,
             encoding=resolved_encoding,
             charset=resolved_charset,
+            gs1=gs1,
         )
 
     def __init__(
@@ -577,6 +583,7 @@ class AztecCode(object):
         ec_percent: int = 23,
         encoding: Optional[str] = None,
         charset: Optional[str] = None,
+        gs1: bool = False,
     ) -> None:
         """Create Aztec code with given payload and settings.
 
@@ -587,6 +594,9 @@ class AztecCode(object):
             ec_percent: Error correction percentage, 5..95 inclusive.
             encoding: Charset used for string payloads and ECI.
             charset: Alias for ``encoding`` used by the modern API.
+            gs1: If True, prepend FLG(0) Reader Initialisation character so
+                industrial scanners identify this as a GS1 Aztec symbol
+                (ISO 24778 §7 / GS1 General Specifications §5.5.3).
 
         Raises:
             ValueError: If API arguments are invalid.
@@ -605,6 +615,7 @@ class AztecCode(object):
 
         self.data = data
         self.encoding = encoding
+        self.gs1 = gs1
         self.sequence = None
         self.ec_percent = ec_percent
         if size is not None and compact is not None:
@@ -614,7 +625,7 @@ class AztecCode(object):
                 raise Exception(
                     'Given size and compact values (%s, %s) are not found in sizes table!' % (size, compact))
         else:
-            self.size, self.compact, self.sequence = find_suitable_matrix_size(self.data, ec_percent, encoding)
+            self.size, self.compact, self.sequence = find_suitable_matrix_size(self.data, ec_percent, encoding, gs1)
         self.__create_matrix()
         self.__encode_data()
 
@@ -823,7 +834,7 @@ class AztecCode(object):
         :return: number of data codewords
         """
         if not self.sequence:
-            self.sequence = find_optimal_sequence(data, encoding)
+            self.sequence = find_optimal_sequence(data, encoding, self.gs1)
         out_bits = optimal_sequence_to_bits(self.sequence)
         config = get_config_from_table(self.size, self.compact)
         layers_count = config.layers

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0] - 2026-04-09
+
+### Added
+- `AztecCode(data, gs1=True)` emits FLG(0) Reader Initialisation as the first
+  encoded character, per ISO 24778 §7 and GS1 General Specifications §5.5.3.
+  Industrial scanners (Zebra, Honeywell, DataLogic) prefix decoded output with
+  `]z3` when FLG(0) is present, enabling GS1 AI routing in WMS/ERP systems.
+- `AztecCode.from_preset(data, preset, gs1=True)` forwards the GS1 flag.
+- `find_optimal_sequence(data, gs1=True)` and `find_suitable_matrix_size(data, gs1=True)`
+  expose the flag for advanced users.
+- `CONFORMANCE.md` — evidence report documenting GS1 2027 compliance and fixture results.
+
 ## [1.1.0] - 2026-04-09
 
 ### Added
