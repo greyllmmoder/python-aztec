@@ -49,10 +49,11 @@ pip install aztec-py
 **With extras:**
 
 ```bash
-pip install "aztec-py[image]"    # PNG output via Pillow
-pip install "aztec-py[svg]"      # lxml-backed SVG (optional; built-in SVG works without it)
-pip install "aztec-py[pdf]"      # PDF output via fpdf2
-pip install "aztec-py[decode]"   # Round-trip decode via python-zxing (requires Java)
+pip install "aztec-py[image]"        # PNG output via Pillow
+pip install "aztec-py[svg]"          # lxml-backed SVG (optional; built-in SVG works without it)
+pip install "aztec-py[pdf]"          # PDF output via fpdf2
+pip install "aztec-py[decode-fast]"  # Round-trip decode via zxingcpp — no Java needed
+pip install "aztec-py[decode]"       # Round-trip decode via python-zxing (requires Java)
 ```
 
 ---
@@ -421,11 +422,42 @@ build_gs1_payload([GS1Element("01","03453120000011"), GS1Element("21","XYZ001",v
 build_gs1_payload([GS1Element("01","03453120000011"), GS1Element("3103","001250")])
 ```
 
+### IATA BCBP boarding pass builder
+
+Build a standards-compliant 60-character IATA Resolution 792 Format Code F string and encode it directly into an Aztec symbol:
+
+```python
+import datetime
+from aztec_py import BCBPSegment, build_bcbp_string, AztecCode
+
+seg = BCBPSegment(
+    passenger_name="SMITH/JOHN",
+    pnr_code="ABC123",
+    from_airport="LHR",
+    to_airport="JFK",
+    carrier="BA",
+    flight_number="0172",
+    date_of_flight=datetime.date(2026, 6, 15),   # auto-converts to Julian day
+    compartment_code="Y",
+    seat_number="023A",
+    sequence_number=42,
+    passenger_status="0",
+    electronic_ticket=True,
+)
+
+bcbp = build_bcbp_string(seg)          # always exactly 60 characters
+AztecCode.from_preset(bcbp, "boarding_pass").save("boarding.svg")
+```
+
+`BCBPSegment` validates all fields (IATA airport codes, sequence range, passenger status digit). A name longer than 20 characters is truncated with a `UserWarning`. Pass the result directly to `from_preset(..., "boarding_pass")` — no manual padding or field formatting required.
+
 ### Round-trip decode (testing / CI validation)
 
 ```python
-from aztec_py import AztecCode, decode   # requires [decode] extra + Java
+from aztec_py import AztecCode, decode
 
+# Java-free (recommended):
+# pip install "aztec-py[decode-fast]"
 code = AztecCode("test payload")
 assert decode(code.image()) == "test payload"
 ```
@@ -474,7 +506,9 @@ The script is skip-safe when ZXing/Java are unavailable — safe for CI environm
 
 See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
-**Latest: [1.1.0]** — Batch encoding API, preset profiles, CLI bulk/benchmark mode, GS1 helpers, AztecRune improvements.
+**Latest: [1.2.0]** — GS1 2027 FLG(0) compliance, IATA BCBP boarding pass builder, Java-free decode via zxingcpp, ECI roundtrip tests.
+
+**[1.1.0]** — Batch encoding API, preset profiles, CLI bulk/benchmark mode, GS1 helpers, AztecRune improvements.
 
 **[1.0.0]** — Production-grade fork: CRLF fix, EC capacity fix, SVG output, PDF output, AztecRune, CLI, type hints, Hypothesis property tests.
 
