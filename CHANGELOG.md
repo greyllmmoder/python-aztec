@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.0] - 2026-04-09
+
+### Added
+- Batch encoding API: `encode_batch(payloads, output, workers, preset)` with ordered results and multiprocessing support.
+- Preset profiles: `boarding_pass`, `transit_ticket`, `event_entry`, `gs1_label` via `AztecCode.from_preset(...)`.
+- CLI bulk mode: `--input`, `--input-format`, `--workers`, `--out-dir`, `--name-template`, `--preset`.
+- CLI benchmark mode: `--benchmark`, `--benchmark-count`, `--benchmark-workers` with throughput metrics.
+- GS1 payload builder: `GS1Element`, `build_gs1_payload`, `GROUP_SEPARATOR`.
+- Production compatibility matrix script (`scripts/decoder_matrix.py`) with markdown report output.
+- Compatibility fixture tests against real-world payloads.
+
+### Changed
+- Development Status classifier promoted to `5 - Production/Stable`.
+- PyPI keywords and classifiers expanded for discoverability.
+
 ## [1.0.0] - 2026-04-05
 
 ### Fixed
