@@ -13,15 +13,21 @@ authors = [
   { name = "greyllmmoder" },
 ]
 keywords = [
-  "aztec", "aztec-code", "barcode", "2d-barcode", "qr-code",
-  "iso-24778", "barcode-generator", "aztec-rune", "svg-barcode",
-  "gs1", "gs1-2027", "gs1-compliant", "gs1-aztec",
-  "boarding-pass", "label-printing", "batch-barcode",
+  "aztec", "aztec-code", "aztec-barcode", "aztec-code-python",
+  "barcode", "barcode-generator", "barcode-api", "python-barcode",
+  "2d-barcode", "qr-code", "qr-code-alternative",
+  "iso-24778", "gs1", "gs1-2027", "gs1-compliant", "gs1-aztec", "gs1-barcode",
+  "iata-bcbp", "boarding-pass", "boarding-pass-barcode",
+  "drug-serialization", "healthcare-barcode", "supply-chain",
+  "label-printing", "batch-barcode", "svg-barcode", "aztec-rune",
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "Intended Audience :: Information Technology",
+  "Intended Audience :: Healthcare Industry",
+  "Intended Audience :: Manufacturing",
+  "Environment :: Console",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
@@ -30,6 +36,9 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Topic :: Multimedia :: Graphics",
+  "Topic :: Office/Business",
+  "Topic :: Printing",
+  "Topic :: Scientific/Engineering :: Information Analysis",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Utilities",
   "Typing :: Typed",
@@ -66,6 +75,8 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/greyllmmoder/python-aztec"
+Documentation = "https://github.com/greyllmmoder/python-aztec#readme"
+Changelog = "https://github.com/greyllmmoder/python-aztec/blob/main/CHANGELOG.md"
 "Bug Tracker" = "https://github.com/greyllmmoder/python-aztec/issues"
 Source = "https://github.com/greyllmmoder/python-aztec"
 Upstream = "https://github.com/dlenski/aztec_code_generator"
