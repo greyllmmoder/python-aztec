@@ -7,7 +7,7 @@
 [![mypy: strict](https://img.shields.io/badge/mypy-strict-blue)](https://mypy-lang.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-**The only pure-Python Aztec barcode library with batch encoding, a CLI, SVG/PDF/PNG output, Rune mode, and GS1 helpers — all zero mandatory dependencies.**
+**The only pure-Python Aztec barcode library with GS1 2027-compliant encoding, batch processing, a CLI, SVG/PDF/PNG output, and Rune mode — zero mandatory dependencies.**
 
 ```bash
 pip install aztec-py
@@ -32,6 +32,7 @@ Every other pure-Python Aztec generator is either abandoned, broken, or missing 
 | No CLI for automation | `aztec "payload" --format svg > code.svg` |
 | No batch encoding | `encode_batch([...], workers=4)` |
 | No GS1 / supply-chain helpers | `build_gs1_payload([GS1Element(...)])` |
+| No GS1 FLG(0) Reader Initialisation (ISO 24778 §7) | `AztecCode(payload, gs1=True)` — industrial scanners route to GS1 AI parsing |
 | No Aztec Rune (0–255) | `AztecRune(42).save("rune.png")` |
 | No type hints / mypy support | Full `mypy --strict` coverage |
 
@@ -132,21 +133,33 @@ for bcbp, pdf_path in zip(manifest, pdf_paths):
 
 ---
 
-### Shipping and logistics — GS1 parcel labels
+### Shipping and logistics — GS1 2027-compliant parcel labels
 
-Warehouses and 3PLs print GS1-compliant Aztec codes on parcel labels at conveyor speed. The GS1 helper constructs the correct group-separator-delimited payload — no hand-crafting hex strings.
+GS1 mandates 2D barcode adoption on all retail consumer products globally by 2027
+(GS1 General Specifications §5.5.3). For Aztec Code, a compliant symbol must begin
+with the **FLG(0) Reader Initialisation** character (ISO 24778 §7). This signals
+industrial scanners (Zebra, Honeywell, DataLogic) to prefix decoded output with `]z3`
+and route GS1 Application Identifiers to WMS/ERP systems. Without `gs1=True`, scanners
+treat the barcode as plain text and backends cannot identify the GS1 AIs.
+
+aztec-py is the only pure-Python Aztec library that emits FLG(0). See [CONFORMANCE.md](CONFORMANCE.md).
 
 ```python
 from aztec_py import AztecCode, GS1Element, build_gs1_payload
 
-# One label: GTIN + expiry + batch + ship-to GLN
+# GS1 2027-compliant label: GTIN + expiry + lot + ship-to GLN
 payload = build_gs1_payload([
-    GS1Element("01", "03453120000011"),               # GTIN-14
-    GS1Element("17", "260930"),                        # Expiry YYMMDD
-    GS1Element("10", "BATCH-2026-04", variable_length=True),  # Lot
-    GS1Element("410", "9501101020917"),                # Ship-To
+    GS1Element("01", "03453120000011"),                      # GTIN-14
+    GS1Element("17", "260930"),                               # Expiry YYMMDD
+    GS1Element("10", "BATCH-2026-04", variable_length=True), # Lot (variable-length)
+    GS1Element("410", "9501101020917"),                       # Ship-To GLN
 ])
-AztecCode(payload, ec_percent=33).save("label.png", module_size=4)
+
+# gs1=True emits FLG(0) — required for industrial scanner GS1 routing
+AztecCode(payload, gs1=True, ec_percent=23).save("label.png", module_size=4)
+
+# With preset (recommended for production)
+AztecCode.from_preset(payload, "gs1_label", gs1=True).save("label.svg")
 
 # High-volume: encode a full dispatch batch from a CSV
 import csv
@@ -338,6 +351,7 @@ AztecCode(
     charset: str | None = None,    # ECI charset hint
     size: int | None = None,       # force matrix size
     compact: bool | None = None,   # force compact/full flag
+    gs1: bool = False,             # emit FLG(0) for GS1 2027 compliance (ISO 24778 §7)
 )
 ```
 
@@ -445,6 +459,7 @@ The script is skip-safe when ZXing/Java are unavailable — safe for CI environm
 | Batch encoding API | ✅ | ❌ | ❌ | ❌ | N/A |
 | Aztec Rune | ✅ | ❌ | ❌ | Backend-dependent | ✅ |
 | GS1 helpers | ✅ | ❌ | ❌ | ❌ | ❌ |
+| GS1 FLG(0) / 2027 compliant | ✅ | ❌ | ❌ | ❌ | ✅ |
 | Preset profiles | ✅ | ❌ | ❌ | ❌ | ❌ |
 | CRLF bug fixed | ✅ | ❌ (open) | ❌ (open) | N/A | N/A |
 | EC capacity bug fixed | ✅ | ❌ (open) | ❌ (open) | N/A | N/A |
