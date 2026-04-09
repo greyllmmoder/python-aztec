@@ -1,6 +1,6 @@
 """Public package API for aztec-py."""
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 from .batch import encode_batch
 from .bcbp import BCBPSegment, build_bcbp_string
