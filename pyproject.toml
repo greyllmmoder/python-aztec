@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aztec-py"
-version = "1.1.0"
+version = "1.2.0"
 description = "GS1 2027-compliant pure-Python Aztec Code generator. FLG(0) Reader Initialisation, batch encoding, SVG/PDF/PNG, CLI, boarding passes, GS1 labels. ISO 24778."
 readme = "README.md"
 requires-python = ">=3.9"
