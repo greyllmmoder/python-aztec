@@ -4,18 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aztec-py"
-version = "0.11.0"
-description = "Pure-Python Aztec Code 2D barcode generator - production-grade fork"
+version = "1.1.0"
+description = "Pure-Python Aztec Code generator for boarding passes, GS1 labels, ticketing, and high-volume batch workflows. SVG, PDF, PNG, CLI, ISO 24778."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 authors = [
   { name = "greyllmmoder" },
 ]
-keywords = ["aztec", "barcode", "2d-barcode", "qr", "iso-24778"]
+keywords = [
+  "aztec", "aztec-code", "barcode", "2d-barcode", "qr-code",
+  "iso-24778", "barcode-generator", "aztec-rune", "svg-barcode",
+  "gs1", "boarding-pass", "label-printing", "batch-barcode",
+]
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
@@ -24,6 +29,9 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Topic :: Multimedia :: Graphics",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Utilities",
+  "Typing :: Typed",
 ]
 dependencies = []
 

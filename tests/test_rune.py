@@ -44,10 +44,26 @@ def test_rune_save_svg_file_object(tmp_path: Path) -> None:
     assert "<svg" in target.read_text(encoding="utf-8")
 
 
+def test_rune_save_svg_path(tmp_path: Path) -> None:
+    rune = AztecRune(5)
+    target = tmp_path / "rune.svg"
+    rune.save(target)
+    assert "<svg" in target.read_text(encoding="utf-8")
+
+
 def test_rune_save_pdf(tmp_path: Path) -> None:
     pytest.importorskip("fpdf")
     rune = AztecRune(99)
     target = tmp_path / "rune.pdf"
     rune.save(target, format="pdf")
     assert target.exists()
+    assert target.stat().st_size > 64
+
+
+def test_rune_save_pdf_to_file_object(tmp_path: Path) -> None:
+    pytest.importorskip("fpdf")
+    rune = AztecRune(12)
+    target = tmp_path / "rune.pdf"
+    with target.open("wb") as fh:
+        rune.save(fh, format="pdf")
     assert target.stat().st_size > 64

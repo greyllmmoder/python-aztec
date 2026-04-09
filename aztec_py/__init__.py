@@ -1,5 +1,8 @@
 """Public package API for aztec-py."""
 
+__version__ = "1.1.0"
+
+from .batch import encode_batch
 from .core import (
     AztecCode,
     Latch,
@@ -16,10 +19,12 @@ from .core import (
 )
 from .decode import decode
 from .gs1 import GROUP_SEPARATOR, GS1Element, build_gs1_payload
+from .presets import AztecPreset, get_preset, list_presets
 from .rune import AztecRune
 
 __all__ = [
     'AztecCode',
+    'encode_batch',
     'Latch',
     'Misc',
     'Mode',
@@ -36,4 +41,7 @@ __all__ = [
     'GROUP_SEPARATOR',
     'GS1Element',
     'build_gs1_payload',
+    'AztecPreset',
+    'get_preset',
+    'list_presets',
 ]

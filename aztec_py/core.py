@@ -21,6 +21,7 @@ from collections import namedtuple
 from enum import Enum
 from typing import IO, Any, Optional, Union
 
+from aztec_py.presets import get_preset
 from aztec_py.renderers.image import image_from_matrix
 from aztec_py.renderers.svg import svg_from_matrix
 
@@ -535,6 +536,38 @@ def find_suitable_matrix_size(
 
 class AztecCode(object):
     """Generate and render an Aztec Code symbol."""
+
+    @classmethod
+    def from_preset(
+        cls,
+        data: Union[str, bytes],
+        preset: str,
+        *,
+        size: Optional[int] = None,
+        compact: Optional[bool] = None,
+        ec_percent: Optional[int] = None,
+        encoding: Optional[str] = None,
+        charset: Optional[str] = None,
+    ) -> "AztecCode":
+        """Build an AztecCode using named preset defaults.
+
+        Explicit values override preset defaults.
+        """
+        preset_config = get_preset(preset)
+        resolved_ec = ec_percent if ec_percent is not None else preset_config.ec_percent
+        resolved_encoding = encoding
+        resolved_charset = charset
+        if resolved_encoding is None and resolved_charset is None:
+            resolved_charset = preset_config.charset
+
+        return cls(
+            data,
+            size=size,
+            compact=compact,
+            ec_percent=resolved_ec,
+            encoding=resolved_encoding,
+            charset=resolved_charset,
+        )
 
     def __init__(
         self,
